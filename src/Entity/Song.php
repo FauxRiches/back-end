@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use App\Repository\SongRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 
 #[ORM\Entity(repositoryClass: SongRepository::class)]
 class Song
@@ -24,6 +26,18 @@ class Song
 
     #[ORM\Column(length: 25)]
     private ?string $status = null;
+
+    /**
+     * @var Collection<int, Link>
+     */
+    #[ORM\ManyToMany(targetEntity: Link::class, inversedBy: 'songs')]
+    private Collection $link;
+
+    public function __construct()
+    {
+        $this->links = new ArrayCollection();
+        $this->link = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -74,6 +88,30 @@ class Song
     public function setStatus(string $status): static
     {
         $this->status = $status;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Link>
+     */
+    public function getLink(): Collection
+    {
+        return $this->link;
+    }
+
+    public function addLink(Link $link): static
+    {
+        if (!$this->link->contains($link)) {
+            $this->link->add($link);
+        }
+
+        return $this;
+    }
+
+    public function removeLink(Link $link): static
+    {
+        $this->link->removeElement($link);
 
         return $this;
     }

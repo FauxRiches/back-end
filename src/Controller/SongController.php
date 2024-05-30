@@ -44,11 +44,11 @@ class SongController extends AbstractController
     }
 
     #[Route('/api/song/{idSong}', name: 'song.update', methods: ['PUT'])]
-    public function updateSong(int $idSong, SongRepository $songRepositor, Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManager): JsonResponse
+    public function updateSong(int $idSong, SongRepository $songRepository, Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManager): JsonResponse
     {
         $updatedSong = $serializer->deserialize($request->getContent(), Song::class, 'json');
-        $song = $songRepositor->find($idSong);
-        $song->getTitle($updatedSong->getTitle());
+        $song = $songRepository->find($idSong);
+        $song->setTitle($updatedSong->getTitle());
         $song->setArtist($updatedSong->getArtist());
         $song->setAlbum($updatedSong->getAlbum());
         $song->setStatus($updatedSong->getStatus());
