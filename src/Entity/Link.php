@@ -19,9 +19,6 @@ class Link
     #[ORM\Column(length: 255)]
     private ?string $url = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $qrcode = null;
-
     /**
      * @var Collection<int, Song>
      */
@@ -46,18 +43,6 @@ class Link
     public function setUrl(string $url): static
     {
         $this->url = $url;
-
-        return $this;
-    }
-
-    public function getQrcode(): ?string
-    {
-        return $this->qrcode;
-    }
-
-    public function setQrcode(string $qrcode): static
-    {
-        $this->qrcode = $qrcode;
 
         return $this;
     }
