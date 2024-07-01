@@ -16,10 +16,9 @@ use App\Entity\User;
 class UserController extends AbstractController
 {
 
-    #[Route('/{idUser}', name: 'user.getOne', methods: ['GET'])]
-    public function getUserById(int $idUser, UserRepository $userRepository, SerializerInterface $serializer): JsonResponse
+    #[Route('/{user}', name: 'user.getOne', methods: ['GET'])]
+    public function getUserById(User $user, UserRepository $userRepository, SerializerInterface $serializer): JsonResponse
     {
-        $user = $userRepository->find($idUser);
         $jsonUser = $serializer->serialize($user, 'json');
         return new JsonResponse($jsonUser, Response::HTTP_OK, ['accept' => 'json'], true);
     }
@@ -43,11 +42,10 @@ class UserController extends AbstractController
         return new JsonResponse($jsonUser, Response::HTTP_CREATED, [], true);
     }
 
-    #[Route('/{idUser}', name: 'user.update', methods: ['PUT'])]
-    public function updateUser(int $idUser, UserRepository $userRepository, Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManager): JsonResponse
+    #[Route('/{user}', name: 'user.update', methods: ['PUT'])]
+    public function updateUser(User $user, UserRepository $userRepository, Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManager): JsonResponse
     {
         $updatedUser = $serializer->deserialize($request->getContent(), User::class, 'json');
-        $user = $userRepository->find($idUser);
         $user->setUsername($updatedUser->getUsername());
         $user->setPassword($updatedUser->getPassword());
         $user->setRoles($updatedUser->getRoles());
@@ -58,7 +56,7 @@ class UserController extends AbstractController
         return new JsonResponse($jsonUser, Response::HTTP_OK, [], true);
     }
 
-    #[Route('/{idUser}', name: 'user.delete', methods: ['DELETE'])]
+    #[Route('/{user}', name: 'user.delete', methods: ['DELETE'])]
     public function deleteUser(User $user, EntityManagerInterface $entityManager): JsonResponse
     {
         $entityManager->remove($user);
