@@ -3,6 +3,8 @@
 namespace App\DataFixtures;
 
 use Faker\Factory;
+use App\Entity\Link;
+use App\Entity\Song;
 use App\Entity\User;
 use Faker\Generator;
 use Doctrine\Persistence\ObjectManager;
@@ -46,6 +48,37 @@ class AppFixtures extends Fixture
             $manager->persist($user);
         }
 
+        $manager->flush();
+
+        // Create 20 songs
+        $songs = [];
+        for($i = 0; $i < 20; $i++){
+            $song = new Song();
+            $song->setTitle($this->faker->word())
+                ->setArtist($this->faker->name())
+                ->setAlbum($this->faker->word())
+                ->setStatus("on");
+
+            $songs[] = $song;       
+            $manager->persist($song);
+        }
+
+        $manager->flush();
+
+        // Create 10 links
+        for($i = 0; $i < 10; $i++){
+            $link = new Link();
+            $link->setUrl($this->faker->url());
+
+            // Add a random number of songs to the link
+            $randomSongs = $this->faker->randomElements($songs, $this->faker->numberBetween(1, 3));
+            foreach($randomSongs as $song){
+                $link->addSong($song);
+            }
+
+            $manager->persist($link);
+        }
+        
         $manager->flush();
     }
 }
