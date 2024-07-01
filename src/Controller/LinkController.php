@@ -21,11 +21,10 @@ use Endroid\QrCode\Logo\Logo;
 use Endroid\QrCode\Color\Color;
 use Endroid\QrCode\Label\Label;
 
+#[Route('/api')]
 class LinkController extends AbstractController
 {
-
-
-    #[Route('/api/links', name: 'link.getAll', methods: ['GET'])]
+    #[Route('/links', name: 'link.getAll', methods: ['GET'])]
     public function getAllLinks(LinkRepository $linkRepository, SerializerInterface $serializer): JsonResponse
     {
         $links = $linkRepository->findAll();
@@ -33,14 +32,14 @@ class LinkController extends AbstractController
         return new JsonResponse($jsonLinks, Response::HTTP_OK, [], true);
     }
 
-    #[Route('/api/links/{link}', name: 'link.get', methods: ['GET'])]
+    #[Route('/links/{link}', name: 'link.get', methods: ['GET'])]
     public function getLink(Link $link, LinkRepository $linkRepository, SerializerInterface $serializer): JsonResponse
     {
         $jsonLink =  $serializer->serialize($link, 'json');
         return new JsonResponse($jsonLink, Response::HTTP_OK, [], true);
     }
 
-    #[Route('/api/links', name: 'link.create', methods: ['POST'])]
+    #[Route('/links', name: 'link.create', methods: ['POST'])]
     public function createLink(Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManager, UrlGeneratorInterface $urlGenerator): JsonResponse
     {
         $link = $serializer->deserialize($request->getContent(), Link::class, 'json');
@@ -56,7 +55,7 @@ class LinkController extends AbstractController
     }
 
 
-    #[Route('/api/links/addSong', name: 'link.addSong', methods: ['POST'])]
+    #[Route('/links/addSong', name: 'link.addSong', methods: ['POST'])]
     public function addSongToLink(Request $request, SerializerInterface $serializer, LinkRepository $linkRepository, EntityManagerInterface $entityManager): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
@@ -74,7 +73,7 @@ class LinkController extends AbstractController
     }
 
 
-    #[Route('/api/qr-code/{link}', name: 'link.qrCode', methods: ['GET'])]
+    #[Route('/qr-codes/{link}', name: 'link.qrCode', methods: ['GET'])]
     public function qrcodes(Link $link): JsonResponse
     {
         $writer = new PngWriter();
@@ -93,10 +92,10 @@ class LinkController extends AbstractController
         // $qrCodes['img'] = $writer->write($qrCode, $logo)->getDataUri();
         $qrCodes['img'] = $writer->write($qrCode)->getDataUri();
         $qrCodes['simple'] = $writer->write(
-                                $qrCode,
-                                null,
-                                $label->setText('Simple')
-                            )->getDataUri();
+            $qrCode,
+            null,
+            $label->setText('Simple')
+        )->getDataUri();
  
         $qrCode->setForegroundColor(new Color(255, 0, 0));
         $qrCodes['changeColor'] = $writer->write(

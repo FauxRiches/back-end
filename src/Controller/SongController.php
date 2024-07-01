@@ -13,17 +13,17 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use App\Repository\SongRepository;
 use App\Entity\Song;
 
+#[Route('/api/songs')]
 class SongController extends AbstractController
 {
-
-    #[Route('/api/song/{song}', name: 'song.getOne', methods: ['GET'])]
+    #[Route('/{song}', name: 'song.getOne', methods: ['GET'])]
     public function getSong(Song $song, SongRepository $songRepository, SerializerInterface $serializer): JsonResponse
     {
         $jsonSong = $serializer->serialize($song, 'json');
         return new JsonResponse($jsonSong, Response::HTTP_OK, ['accept' => 'json'], true);
     }
 
-    #[Route('/api/songs', name: 'song.getAll', methods: ['GET'])]
+    #[Route('', name: 'song.getAll', methods: ['GET'])]
     public function getAllSongs(SongRepository $songRepository, SerializerInterface $serializer): JsonResponse
     {
         $songs = $songRepository->findAll();
@@ -31,7 +31,7 @@ class SongController extends AbstractController
         return new JsonResponse($jsonSongs, Response::HTTP_OK, [], true);
     }
 
-    #[Route('/api/songs', name: 'song.create', methods: ['POST'])]
+    #[Route('', name: 'song.create', methods: ['POST'])]
     public function createSong(Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManager, UrlGeneratorInterface $urlGenerator): JsonResponse
     {
         $song = $serializer->deserialize($request->getContent(), Song::class, 'json');
@@ -43,7 +43,7 @@ class SongController extends AbstractController
         return new JsonResponse($jsonSong, Response::HTTP_CREATED, ["Location" => $location],  true);
     }
 
-    #[Route('/api/song/{song}', name: 'song.update', methods: ['PUT'])]
+    #[Route('/{song}', name: 'song.update', methods: ['PUT'])]
     public function updateSong(Song $song, SongRepository $songRepository, Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManager): JsonResponse
     {
         $updatedSong = $serializer->deserialize($request->getContent(), Song::class, 'json');
@@ -57,7 +57,7 @@ class SongController extends AbstractController
         return new JsonResponse($jsonSong, Response::HTTP_OK, [], true);
     }
 
-    #[Route('/api/song/{song}', name: 'song.delete', methods: ['DELETE'])]
+    #[Route('/{song}', name: 'song.delete', methods: ['DELETE'])]
     public function deleteSong(Song $song, EntityManagerInterface $entityManager): JsonResponse
     {
         $entityManager->remove($song);
@@ -67,7 +67,7 @@ class SongController extends AbstractController
     }
 
 
-    #[Route('/api/song/{song}/status', name: 'song.updateStatus', methods: ['PATCH'])]
+    #[Route('/{song}/status', name: 'song.updateStatus', methods: ['PATCH'])]
     public function updateStatus(Song $song, SongRepository $songRepository, Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManager): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
