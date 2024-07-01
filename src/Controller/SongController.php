@@ -16,10 +16,9 @@ use App\Entity\Song;
 class SongController extends AbstractController
 {
 
-    #[Route('/api/song/{idSong}', name: 'song.getOne', methods: ['GET'])]
-    public function getSong(int $idSong, SongRepository $songRepository, SerializerInterface $serializer): JsonResponse
+    #[Route('/api/song/{song}', name: 'song.getOne', methods: ['GET'])]
+    public function getSong(Song $song, SongRepository $songRepository, SerializerInterface $serializer): JsonResponse
     {
-        $song = $songRepository->find($idSong);
         $jsonSong = $serializer->serialize($song, 'json');
         return new JsonResponse($jsonSong, Response::HTTP_OK, ['accept' => 'json'], true);
     }
@@ -43,11 +42,10 @@ class SongController extends AbstractController
         return new JsonResponse($jsonSong, Response::HTTP_CREATED, [], true);
     }
 
-    #[Route('/api/song/{idSong}', name: 'song.update', methods: ['PUT'])]
-    public function updateSong(int $idSong, SongRepository $songRepository, Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManager): JsonResponse
+    #[Route('/api/song/{song}', name: 'song.update', methods: ['PUT'])]
+    public function updateSong(Song $song, SongRepository $songRepository, Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManager): JsonResponse
     {
         $updatedSong = $serializer->deserialize($request->getContent(), Song::class, 'json');
-        $song = $songRepository->find($idSong);
         $song->setTitle($updatedSong->getTitle());
         $song->setArtist($updatedSong->getArtist());
         $song->setAlbum($updatedSong->getAlbum());
@@ -58,7 +56,7 @@ class SongController extends AbstractController
         return new JsonResponse($jsonSong, Response::HTTP_OK, [], true);
     }
 
-    #[Route('/api/song/{idSong}', name: 'song.delete', methods: ['DELETE'])]
+    #[Route('/api/song/{song}', name: 'song.delete', methods: ['DELETE'])]
     public function deleteSong(Song $song, EntityManagerInterface $entityManager): JsonResponse
     {
         $entityManager->remove($song);
@@ -68,16 +66,14 @@ class SongController extends AbstractController
     }
 
 
-    #[Route('/api/song/{idSong}/status', name: 'song.updateStatus', methods: ['PATCH'])]
-    public function updateStatus(int $idSong, SongRepository $songRepository, Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManager): JsonResponse
+    #[Route('/api/song/{song}/status', name: 'song.updateStatus', methods: ['PATCH'])]
+    public function updateStatus(Song $song, SongRepository $songRepository, Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManager): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
         if (!isset($data['status'])) {
             return new JsonResponse(['error' => 'Status field is missing'], Response::HTTP_BAD_REQUEST);
         }
         $status = $data['status'];
-
-        $song = $songRepository->find($idSong);
         
         if (!$song) {
             return new JsonResponse(['error' => 'Song not found'], Response::HTTP_NOT_FOUND);
