@@ -32,14 +32,15 @@ class SongController extends AbstractController
     }
 
     #[Route('/api/songs', name: 'song.create', methods: ['POST'])]
-    public function createSong(Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManager): JsonResponse
+    public function createSong(Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManager, UrlGeneratorInterface $urlGenerator): JsonResponse
     {
         $song = $serializer->deserialize($request->getContent(), Song::class, 'json');
         $entityManager->persist($song);
         $entityManager->flush();
 
         $jsonSong = $serializer->serialize($song, 'json');
-        return new JsonResponse($jsonSong, Response::HTTP_CREATED, [], true);
+        $location = $urlGenerator->generate("song.getOne", ["song" => $song->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
+        return new JsonResponse($jsonSong, Response::HTTP_CREATED, ["Location" => $location],  true);
     }
 
     #[Route('/api/song/{song}', name: 'song.update', methods: ['PUT'])]
