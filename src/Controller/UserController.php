@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 use App\Repository\UserRepository;
 use App\Entity\User;
 
-#[Route('/api/user')]
+#[Route('/api/users')]
 class UserController extends AbstractController
 {
 
