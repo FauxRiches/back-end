@@ -43,7 +43,9 @@ class AppFixtures extends Fixture
             $user->setUsername($username. "/". $password)
                 ->setRoles(["ROLE_USER"])
                 ->setPassword($this->userPasswordHasher->hashPassword($user,$password) )
-                ->setEmail($username. "@gmail.com");
+                ->setEmail($username. "@gmail.com")
+                ->setDeletedAt($this->faker->optional()->dateTimeThisYear());
+                
 
             $manager->persist($user);
         }
