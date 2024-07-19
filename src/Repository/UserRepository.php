@@ -33,6 +33,28 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->getEntityManager()->flush();
     }
 
+    public function findAll(): array
+    {
+        return $this->createQueryBuilder('u')
+            ->andWhere('u.deletedAt IS NULL')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findBy(array $criteria, ?array $orderBy = null, ?int $limit = null, ?int $offset = null): array
+    {
+        $criteria['deletedAt'] = null;
+
+        return parent::findBy($criteria, $orderBy, $limit, $offset);
+    }
+
+    public function findOneBy(array $criteria, ?array $orderBy = null): ?object
+    {
+        $criteria['deletedAt'] = null;
+
+        return parent::findOneBy($criteria, $orderBy);
+    }
+
     //    /**
     //     * @return User[] Returns an array of User objects
     //     */
