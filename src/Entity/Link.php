@@ -15,11 +15,11 @@ class Link
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['song:read'])]
+    #[Groups(['song:read', 'link:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['song:read'])]
+    #[Groups(['song:read', 'link:read'])]
     private ?string $url = null;
 
     /**
