@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,7 +20,7 @@ class SongController extends AbstractController
     #[Route('/{song}', name: 'song.getOne', methods: ['GET'])]
     public function getSong(Song $song, SongRepository $songRepository, SerializerInterface $serializer): JsonResponse
     {
-        $jsonSong = $serializer->serialize($song, 'json');
+        $jsonSong = $serializer->serialize($song, 'json', [AbstractNormalizer::GROUPS => ['song:read']]);
         return new JsonResponse($jsonSong, Response::HTTP_OK, ['accept' => 'json'], true);
     }
 
@@ -27,7 +28,7 @@ class SongController extends AbstractController
     public function getAllSongs(SongRepository $songRepository, SerializerInterface $serializer): JsonResponse
     {
         $songs = $songRepository->findAll();
-        $jsonSongs = $serializer->serialize($songs, 'json');
+        $jsonSongs = $serializer->serialize($songs, 'json', [AbstractNormalizer::GROUPS => ['song:read']]);
         return new JsonResponse($jsonSongs, Response::HTTP_OK, [], true);
     }
 

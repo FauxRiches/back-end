@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use App\Entity\Link;
@@ -28,14 +29,14 @@ class LinkController extends AbstractController
     public function getAllLinks(LinkRepository $linkRepository, SerializerInterface $serializer): JsonResponse
     {
         $links = $linkRepository->findAll();
-        $jsonLinks = $serializer->serialize($links, 'json');
+        $jsonLinks = $serializer->serialize($links, 'json', [AbstractNormalizer::GROUPS => ['link:read']]);
         return new JsonResponse($jsonLinks, Response::HTTP_OK, [], true);
     }
 
     #[Route('/links/{link}', name: 'link.get', methods: ['GET'])]
     public function getLink(Link $link, LinkRepository $linkRepository, SerializerInterface $serializer): JsonResponse
     {
-        $jsonLink =  $serializer->serialize($link, 'json');
+        $jsonLink =  $serializer->serialize($link, 'json', [AbstractNormalizer::GROUPS => ['link:read']]);
         return new JsonResponse($jsonLink, Response::HTTP_OK, [], true);
     }
 
